@@ -23,18 +23,26 @@ const setSuccess = () => {   // Deklarerar success funktionen
 
 const isValidEmail = email => {  // Deklarerar isValidEmail
     const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$/;       // Regular expression som bestämmer hur en giltig emailadress måste se ut
-    return regEx.test(String(email).toLowerCase());     // Returnerar regEx och omvandlar den till endast gemener.
+    return regEx.test(email.toLowerCase());     // Returnerar regEx och omvandlar den till endast gemener.
 }
 
+const isValidName = name => { 
+    const regExText = /^[a-öA-Ö\s\-]*$/; 
+    return regExText.test(name);
+}
 
 
 const validateFirstName = () => {     // Deklarerar funtion till förnamet
     const firstNameValue = firstName.value.trim();     // Bestämmer att firstNameValue tar emot value och tar bort eventuella mellanslag ur namnet
 
     if(firstNameValue === '' || firstNameValue.length < 2) {      // "Om firstNameValue är en tom string ELLER mindre än två bokstäver"
-        console.log('Ange ett förnamn')        
+        console.log('Ange ett förnamn')  
         return setError();      // Vi använder setError funktionen för att berätta för användaren att någonting har gått fel i formuläret vid firstName
-    }else {
+    } else if(!isValidName(firstNameValue)) {
+        console.log('Ange ett namn utan nummer');
+        return setError(); 
+    }
+    else {
         return setSuccess();        // Om kraven är uppfyllda -> inget felmeddelande visas
     }
 }
@@ -47,7 +55,10 @@ const validateLastName = () => {        // Deklrarera lastName-funktionen. I den
     if(lastNameValue === '' || lastNameValue.length < 2) {
         console.log('Ange ett korrekt efternamn')
         return setError();
-    } else {
+    }  else if(!isValidName(lastNameValue)) {
+        console.log('Namnet får inte innehålla några siffror')
+        return setError(); 
+    }else {
         return setSuccess();
     }
 };
@@ -58,7 +69,7 @@ const validateEmail = () => {        // Deklarera email-funktionen
     const emailValue = email.value.trim();      // Deklarerar emailValue för att ta emot value från email och ta bort eventuella mellanslag.
 
     if(emailValue === "") {      // Om emailValue är en tom string så returnerar vi setError funktionen som visar att någonting gått snett i emailrutan
-        console.log('Ange en giltig emailadress')
+        console.log('Ange en emailadress')
         return setError();
     } else if(!isValidEmail(emailValue)) {      // Om emailadressen inte överrensstämmer med isValidEmail-funktionen så returnerar vi också ett felmeddelande
         console.log('Ange en giltig emailadress')
@@ -101,40 +112,41 @@ const validateTerms = () => {        // Deklarerar checkbox funktionen
 
 
 
+
+
 validationForm.addEventListener('submit', (e) => {          // Skapar en eventlistener som lyssnar efter submit, då vi klickar på validate-knappen.
     
     e.preventDefault();     // När vi trycker på validate kommer sidan inte att laddas om.
-    validateFirstName();        // Hämtar och kallar på alla funktioner vi skapat
-    validateLastName();         //
-    validateEmail();            //
-    validatePasswords();        //
-    validateTerms();            //
-    validateForm();             //
+//    validateFirstName();        // Hämtar och kallar på alla funktioner vi skapat
+//     validateLastName();         //
+//     validateEmail();            //
+//     validatePasswords();        //
+//     validateTerms();            //
+    // validateForm();             //
 
 
-function validateForm() {                   // Skapar en funktion på hela formuläret som kollar ifall alla funkctioner vi skapat returnerar True ->
+// function validateForm() {                   // Skapar en funktion på hela formuläret som kollar ifall alla funkctioner vi skapat returnerar True ->
     if(validateFirstName() == true &&       // och returnerar därefter setSuccess eller setError ifall allting är korrekt ifyllt eller inte.
     validateLastName() == true &&
     validateEmail() == true &&
     validatePasswords() == true && 
     validateTerms() ) {
         console.log('Du har fyllt i alla uppgifter korrekt!')       // Om allting stämmer och är korrekt skrivs ett meddelande ut i konsolen.
+        
+        const user = {      // Skapar ett user-object som tar in de värden användaren skriver in i fälten.
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+            password: password.value,
+        }
+        
+        console.log(user)       // Loggar objektet till konsolen. 
         return setSuccess();
     } else {
         return setError();
     }
 
-}
-
-
-const user = {      // Skapar ett user-object som tar in de värden användaren skriver in i fälten.
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    password: password.value,
-}
-
-console.log(user)       // Loggar objektet till konsolen. 
+// }
 
 });
 
